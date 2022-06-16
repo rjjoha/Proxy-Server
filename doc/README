@@ -1,0 +1,58 @@
+CSE 156
+Robert Johansen
+Student ID #: 1817389
+Project
+
+This lab requires us to make a TCP proxy server that will act as a man in the middle, creating secure connections between our client
+and the server that we are trying to communicate with. We have a list of sites that we cannot connect to and we need to make sure we
+don't open those connections. We are also multithreading the server to accept up to 50 connections at once, meaning we need to make sure
+our program is thread safe. Lastly, we need to output access log to a file.
+
+I struggled mightily with the Open SSL code. I couldn't figure out how to set up the certificates for creating the connection. As you'll see,
+I left the proxy server as just a normal TCP HTTP proxy. Tried running different configurations I found on the internet but could never narrow
+something down for it. You can see that I commented out all the code I was working on for it. I also couldn't implement the refresh on the forbidden site file with Cntl + C. Ran out of time trying to get the OpenSSL
+to run properly and couldn't conceptualize how I would force quit the program if I overloaded Cntl + C.
+
+
+Test cases:
+
+bin/myproxy 9877 test1 test2
+
+curl -x http://127.0.0.1:9877/ http://www.example.com
+wget 127.0.0.1:9877 --header="Host: www.example.com"
+curl -x http://127.0.0.1:9877/ http://www.example.com:555 // No address existed for this server as indicated by the false port number
+wget 127.0.0.1:9877 --header="Host: pudim.com.br"
+wget www.example.com -e use_proxy=yes -e http_proxy=127.0.0.1:9877
+
+
+
+Resources Cited:
+
+UNIX Network Programming Volume 1, Third Edition: The Sockets Networking API
+    W. Richard Stevens, Bill Fenner, Andrew M. Rudoff
+
+Using the read and write functions from Lab1, which were pulled from the book
+
+https://opensource.com/article/19/6/cryptography-basics-openssl-part-1
+
+Used this as a basis for trying to set up the OpenSSL connections
+
+https://www.openssl.org/docs/man1.1.1/man3/SSL_read.html
+
+Used this site as a way to figure out how to execute the SSL_read function
+
+https://www.rexegg.com/regex-quickstart.html
+
+Used this along with strstr to parse the URI to get the information I needed to connect to the server
+
+https://www.tutorialspoint.com/c_standard_library/c_function_strftime.htm
+
+Website was used so that I could read in the strftime() function into the out file
+
+https://www.ibm.com/docs/en/i/7.2?topic=functions-strcasecmp-compare-strings-without-case-sensitivity
+
+Needed this along with strstr to parse the URI
+
+https://www.tutorialspoint.com/c_standard_library/c_function_strstr.htm
+
+Main function used to be able to extract the host and port name for the serverfd
